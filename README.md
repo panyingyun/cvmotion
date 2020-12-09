@@ -19,4 +19,20 @@ example for 树莓派 32位:
 change config by prod.yaml
 ```
 
+### Config CVMotion
+
+config by prod.yaml
+
+```
+camera:
+  deviceid: 0    # deviceID of Camera
+web:
+  enable: true   # open web server or not 
+  host: 0.0.0.0
+  post: 9000
+video:
+  enable: false  # open auto save motion to video file or not 
+  fps: 25
+  prefix: motion
+```
 
