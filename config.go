@@ -6,10 +6,26 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-type Config struct {
+type CameraConfig struct {
 	DeviceID string `yaml:"deviceid"`
-	Host     string `yaml:"host"`
-	Prefix   string `yaml:"prefix"`
+}
+
+type WebConfig struct {
+	Enable bool   `yaml:"enable"`
+	Host   string `yaml:"host"`
+	Port   string `yaml:"post"`
+}
+
+type VideoConfig struct {
+	Enable bool    `yaml:"enable"`
+	Fps    float64 `yaml:"fps"`
+	Prefix string  `yaml:"prefix"`
+}
+
+type Config struct {
+	Camera CameraConfig `yaml:"camera"`
+	Web    WebConfig    `yaml:"web"`
+	Video  VideoConfig  `yaml:"video"`
 }
 
 var config Config

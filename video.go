@@ -16,8 +16,7 @@ const (
 	//cronSpecCheck = "0 */1 * * * *" //Every min
 	cronSpecCheck = "0 0 */1 * * *" //Every Hour
 
-	Fps   float64 = 20
-	Codes string  = "MJPG"
+	Codes string = "MJPG"
 	//Codes string = "MP42"
 )
 
@@ -26,6 +25,7 @@ type VideoSaver struct {
 	cron        *cron.Cron
 	prefix      string
 	filename    string
+	fps         float64
 	videoWidth  int
 	videoHeight int
 	writer      *gocv.VideoWriter
@@ -33,7 +33,7 @@ type VideoSaver struct {
 }
 
 //img.Cols(), img.Rows()
-func NewVideoSaver(deviceID string, prefix string) (*VideoSaver, error) {
+func NewVideoSaver(deviceID string, prefix string, fps float64) (*VideoSaver, error) {
 	//Create Video Capture
 	webcam, err := gocv.OpenVideoCapture(deviceID)
 	if err != nil {
@@ -53,13 +53,14 @@ func NewVideoSaver(deviceID string, prefix string) (*VideoSaver, error) {
 	cron := cron.New(cron.WithSeconds())
 	ctx := context.Background()
 	filename := fmt.Sprintf("%v.avi", prefix+"-"+time.Now().Format("20060102150405"))
-	writer, err := gocv.VideoWriterFile(filename, Codes, Fps, width, height, true)
+	writer, err := gocv.VideoWriterFile(filename, Codes, fps, width, height, true)
 	fmt.Printf("prefix = %v, width = %v, height = %v\n", prefix, width, height)
 	return &VideoSaver{
 		ctx:         ctx,
 		cron:        cron,
 		prefix:      prefix,
 		filename:    filename,
+		fps:         fps,
 		writer:      writer,
 		videoWidth:  width,
 		videoHeight: height,
@@ -93,7 +94,7 @@ func (vs *VideoSaver) autoChangeVideoFileName() {
 	vs.lock.Lock()
 	vs.writer.Close()
 	var err error
-	vs.writer, err = gocv.VideoWriterFile(vs.filename, Codes, Fps, vs.videoWidth, vs.videoHeight, true)
+	vs.writer, err = gocv.VideoWriterFile(vs.filename, Codes, vs.fps, vs.videoWidth, vs.videoHeight, true)
 	if err != nil {
 		vs.writer = nil
 	}

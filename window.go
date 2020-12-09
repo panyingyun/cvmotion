@@ -91,7 +91,7 @@ func (cw *CVWindow) Run() {
 		contours := gocv.FindContours(cw.imgThresh, gocv.RetrievalExternal, gocv.ChainApproxSimple)
 
 		//如果有变化，则更新图像
-		if len(contours) > 0 {
+		if cw.motionStatus(contours) {
 			status = "Motion detected"
 			nowString := time.Now().Format("2006-01-02 15:04:05")
 			gocv.PutText(&cw.img, nowString+" : "+status, image.Pt(10, 20), gocv.FontHersheySimplex, 0.6, statusColor, 1)
@@ -124,6 +124,18 @@ func (cw *CVWindow) Run() {
 			break
 		}
 	}
+}
+
+func (cw *CVWindow) motionStatus(contours [][]image.Point) bool {
+	status := false
+	for _, c := range contours {
+		area := gocv.ContourArea(c)
+		if area < MinimumArea {
+			continue
+		}
+		status = true
+	}
+	return status
 }
 
 func (cw *CVWindow) Close() {

@@ -1,3 +1,10 @@
-deviceid : 0
-host : 0.0.0.0:9000
-prefix : motion
+camera:
+  deviceid: 0
+web:
+  enable: true
+  host: 0.0.0.0
+  post: 9000
+video:
+  enable: false
+  fps: 25
+  prefix: motion
