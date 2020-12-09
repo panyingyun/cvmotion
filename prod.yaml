@@ -5,6 +5,6 @@ web:
   host: 0.0.0.0
   post: 9000
 video:
-  enable: false
+  enable: true
   fps: 25
   prefix: motion
