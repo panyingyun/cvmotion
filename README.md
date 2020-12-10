@@ -26,6 +26,11 @@ config by prod.yaml
 ```
 camera:
   deviceid: 0    # deviceID of Camera
+window:
+  enable: true   # when choose ture open window on desktop. other false
+  title: Motion Window
+  width: 1024
+  height: 768
 web:
   enable: true   # open web server or not 
   host: 0.0.0.0

@@ -17,7 +17,16 @@ const (
 	cronSpecCheck = "0 0 */1 * * *" //Every Hour
 
 	Codes string = "MJPG"
+	// Not Test
 	//Codes string = "MP42"
+	//Codes string = "PIM1" // MPEG-1 codec
+	//Codes string = "MJPG" // motion-jpeg codec
+	//Codes string = "MP42" // MPEG-4.2 codec
+	//Codes string = "DIV3" // MPEG-4.3 codec
+	//Codes string = "DIVX" //MPEG-4 codec
+	//Codes string = "U263" //H263 codec
+	//Codes string = "I263" //H263I codec
+	//Codes string = "FLV1" // FLV1 codec
 )
 
 type VideoSaver struct {
@@ -33,7 +42,7 @@ type VideoSaver struct {
 }
 
 //img.Cols(), img.Rows()
-func NewVideoSaver(deviceID string, prefix string, fps float64) (*VideoSaver, error) {
+func NewVideoSaver(deviceID string, videoCfg VideoConfig) (*VideoSaver, error) {
 	//Create Video Capture
 	webcam, err := gocv.OpenVideoCapture(deviceID)
 	if err != nil {
@@ -52,15 +61,15 @@ func NewVideoSaver(deviceID string, prefix string, fps float64) (*VideoSaver, er
 	height := img.Rows()
 	cron := cron.New(cron.WithSeconds())
 	ctx := context.Background()
-	filename := fmt.Sprintf("%v.avi", prefix+"-"+time.Now().Format("20060102150405"))
-	writer, err := gocv.VideoWriterFile(filename, Codes, fps, width, height, true)
-	fmt.Printf("prefix = %v, width = %v, height = %v\n", prefix, width, height)
+	filename := fmt.Sprintf("%v.avi", videoCfg.Prefix+"-"+time.Now().Format("20060102150405"))
+	writer, err := gocv.VideoWriterFile(filename, Codes, videoCfg.Fps, width, height, true)
+	fmt.Printf("prefix = %v, width = %v, height = %v\n", videoCfg.Prefix, width, height)
 	return &VideoSaver{
 		ctx:         ctx,
 		cron:        cron,
-		prefix:      prefix,
+		prefix:      videoCfg.Prefix,
 		filename:    filename,
-		fps:         fps,
+		fps:         videoCfg.Fps,
 		writer:      writer,
 		videoWidth:  width,
 		videoHeight: height,

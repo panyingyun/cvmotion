@@ -22,10 +22,18 @@ type VideoConfig struct {
 	Prefix string  `yaml:"prefix"`
 }
 
+type WindowConfig struct {
+	Enable bool   `yaml:"enable"`
+	Title  string `yaml:"title"`
+	Width  int    `yaml:"width"`
+	Height int    `yaml:"height"`
+}
+
 type Config struct {
 	Camera CameraConfig `yaml:"camera"`
 	Web    WebConfig    `yaml:"web"`
 	Video  VideoConfig  `yaml:"video"`
+	Window WindowConfig `yaml:"window"`
 }
 
 var config Config

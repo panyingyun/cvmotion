@@ -1,5 +1,10 @@
 camera:
   deviceid: 0
+window:
+  enable: true
+  title: Motion Window
+  width: 1024
+  height: 768
 web:
   enable: true
   host: 0.0.0.0
