@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -42,23 +41,9 @@ type VideoSaver struct {
 }
 
 //img.Cols(), img.Rows()
-func NewVideoSaver(deviceID string, videoCfg VideoConfig) (*VideoSaver, error) {
-	//Create Video Capture
-	webcam, err := gocv.OpenVideoCapture(deviceID)
-	if err != nil {
-		fmt.Printf("Error opening video capture device: %v\n", deviceID)
-		return nil, errors.New("opening video capture device fail")
-	}
-	defer webcam.Close()
-	img := gocv.NewMat()
-	// create video write
-	if ok := webcam.Read(&img); !ok {
-		fmt.Printf("Device closed: %v\n", deviceID)
-		return nil, errors.New("read image fail, device maybe closed")
-	}
-	defer img.Close()
-	width := img.Cols()
-	height := img.Rows()
+func NewVideoSaver(camera CameraConfig, videoCfg VideoConfig) (*VideoSaver, error) {
+	width := camera.Width
+	height := camera.Height
 	cron := cron.New(cron.WithSeconds())
 	ctx := context.Background()
 	filename := fmt.Sprintf("%v.avi", videoCfg.Prefix+"-"+time.Now().Format("20060102150405"))

@@ -30,7 +30,7 @@ func main() {
 	var err error
 	//Create Video Saver
 	if config.Video.Enable {
-		vs, err = NewVideoSaver(deviceID, config.Video)
+		vs, err = NewVideoSaver(config.Camera, config.Video)
 		if err != nil {
 			fmt.Printf("create videoserver fail: %v\n", err)
 			return
