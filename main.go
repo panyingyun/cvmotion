@@ -54,7 +54,7 @@ func main() {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	cv, err := NewCVMotion(deviceID, vs, ws, window, cancel)
+	cv, err := NewCVMotion(config.Camera, vs, ws, window, cancel)
 	if err != nil {
 		fmt.Printf("create opencv window fail: %v\n", err)
 		return

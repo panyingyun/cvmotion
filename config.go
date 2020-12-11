@@ -8,6 +8,8 @@ import (
 
 type CameraConfig struct {
 	DeviceID string `yaml:"deviceid"`
+	Width    int    `yaml:"width"`
+	Height   int    `yaml:"height"`
 }
 
 type WebConfig struct {

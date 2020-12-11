@@ -27,21 +27,23 @@ type CVMotion struct {
 	cancel     context.CancelFunc
 }
 
-func NewCVMotion(deviceID string, vs *VideoSaver, ws *WebServer, window *gocv.Window, cancel context.CancelFunc) (*CVMotion, error) {
+func NewCVMotion(camera CameraConfig, vs *VideoSaver, ws *WebServer, window *gocv.Window, cancel context.CancelFunc) (*CVMotion, error) {
 
 	//Create Video Capture
-	webcam, err := gocv.OpenVideoCapture(deviceID)
+	webcam, err := gocv.OpenVideoCapture(camera.DeviceID)
 	if err != nil {
-		fmt.Printf("Error opening video capture device: %v\n", deviceID)
+		fmt.Printf("Error opening video capture device: %v\n", camera.DeviceID)
 		return nil, errors.New("opening video capture device fail")
 	}
+	webcam.Set(gocv.VideoCaptureFrameWidth, float64(camera.Width))
+	webcam.Set(gocv.VideoCaptureFrameHeight, float64(camera.Height))
 	img := gocv.NewMat()
 	// create video write
 	if ok := webcam.Read(&img); !ok {
-		fmt.Printf("Device closed: %v\n", deviceID)
+		fmt.Printf("Device closed: %v\n", camera.DeviceID)
 		return nil, errors.New("read image fail, device maybe closed")
 	}
-	fmt.Printf("Start reading device: %v\n", deviceID)
+	fmt.Printf("Start reading device: %v\n", camera.DeviceID)
 
 	//Create Image object for detect motion
 	imgDelta := gocv.NewMat()
@@ -105,29 +107,23 @@ func (cv *CVMotion) motionDetect() {
 		status = "Motion detected"
 		nowString := time.Now().Format("2006-01-02 15:04:05")
 		gocv.PutText(&cv.img, nowString+" : "+status, image.Pt(10, 20), gocv.FontHersheySimplex, 0.6, statusColor, 1)
+	}
 
-		//更新网络图像流
-		if cv.webServer != nil {
-			cv.webServer.Update(cv.img)
-		}
+	//更新网络图像流
+	if cv.webServer != nil {
+		cv.webServer.Update(cv.img)
+	}
+
+	if cv.motionStatus(contours) {
 		//将异动图像写入文件
 		if cv.videoSaver != nil {
 			cv.videoSaver.WriteFrame(cv.img)
 		}
+
+		//在原图上绘制移动目标
+		cv.drawMotionArea(contours)
 	}
 
-	for i, c := range contours {
-		area := gocv.ContourArea(c)
-		if area < MinimumArea {
-			continue
-		}
-
-		statusColor = color.RGBA{255, 0, 0, 0}
-		gocv.DrawContours(&cv.img, contours, i, statusColor, 2)
-
-		rect := gocv.BoundingRect(c)
-		gocv.Rectangle(&cv.img, rect, color.RGBA{0, 0, 255, 0}, 2)
-	}
 	if cv.window != nil {
 		cv.window.IMShow(cv.img)
 		if cv.window.WaitKey(1) == KeyEsc {
@@ -146,6 +142,21 @@ func (cv *CVMotion) motionStatus(contours [][]image.Point) bool {
 		status = true
 	}
 	return status
+}
+
+func (cv *CVMotion) drawMotionArea(contours [][]image.Point) {
+	for i, c := range contours {
+		area := gocv.ContourArea(c)
+		if area < MinimumArea {
+			continue
+		}
+
+		statusColor := color.RGBA{255, 0, 0, 0}
+		gocv.DrawContours(&cv.img, contours, i, statusColor, 2)
+
+		rect := gocv.BoundingRect(c)
+		gocv.Rectangle(&cv.img, rect, color.RGBA{0, 0, 255, 0}, 2)
+	}
 }
 
 func (cv *CVMotion) close() {
