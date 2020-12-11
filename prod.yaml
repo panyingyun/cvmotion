@@ -1,16 +1,16 @@
 camera:
   deviceid: 0
   # windows 640x480
-  # RaspberryPi  3280x2464
-  # check camera by "raspistill -v -n -t 2000 -o shot.jpg"
-  #
+  # RaspberryPi  1920*1080
   width: 640
   height: 480
 window:
   enable: true
   title: Motion Window
-  width: 1024
-  height: 768
+  # windows 640x480
+  # RaspberryPi  1920*1080
+  width: 640
+  height: 480
 web:
   enable: true
   host: 0.0.0.0
