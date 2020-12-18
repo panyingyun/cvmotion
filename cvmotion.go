@@ -145,14 +145,14 @@ func (cv *CVMotion) motionStatus(contours [][]image.Point) bool {
 }
 
 func (cv *CVMotion) drawMotionArea(contours [][]image.Point) {
-	for i, c := range contours {
+	for _, c := range contours {
 		area := gocv.ContourArea(c)
 		if area < MinimumArea {
 			continue
 		}
 
-		statusColor := color.RGBA{255, 0, 0, 0}
-		gocv.DrawContours(&cv.img, contours, i, statusColor, 2)
+		//statusColor := color.RGBA{255, 0, 0, 0}
+		//gocv.DrawContours(&cv.img, contours, i, statusColor, 2)
 
 		rect := gocv.BoundingRect(c)
 		gocv.Rectangle(&cv.img, rect, color.RGBA{0, 0, 255, 0}, 2)
