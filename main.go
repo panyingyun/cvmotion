@@ -51,6 +51,7 @@ func main() {
 	if config.Window.Enable {
 		window = gocv.NewWindow(config.Window.Title)
 		window.ResizeWindow(config.Window.Width, config.Window.Height)
+		window.SetWindowProperty(gocv.WindowPropertyOpenGL, gocv.WindowFlag(0x00001000))
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 

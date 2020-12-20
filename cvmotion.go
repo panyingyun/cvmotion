@@ -35,6 +35,7 @@ func NewCVMotion(camera CameraConfig, vs *VideoSaver, ws *WebServer, window *goc
 		fmt.Printf("Error opening video capture device: %v\n", camera.DeviceID)
 		return nil, errors.New("opening video capture device fail")
 	}
+	webcam.Set(gocv.VideoCaptureFPS, float64(30))
 	webcam.Set(gocv.VideoCaptureFrameWidth, float64(camera.Width))
 	webcam.Set(gocv.VideoCaptureFrameHeight, float64(camera.Height))
 	img := gocv.NewMat()
